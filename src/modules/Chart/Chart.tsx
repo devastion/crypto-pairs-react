@@ -3,36 +3,7 @@ import axios from "axios";
 import { Card, Title, LineChart } from "@tremor/react";
 import { Button } from "@tremor/react";
 
-const chartdata = [
-  {
-    year: 1970,
-    "Export Growth Rate": 2.04,
-    "Import Growth Rate": 1.53,
-  },
-  {
-    year: 1971,
-    "Export Growth Rate": 1.96,
-    "Import Growth Rate": 1.58,
-  },
-  {
-    year: 1972,
-    "Export Growth Rate": 1.96,
-    "Import Growth Rate": 1.61,
-  },
-  {
-    year: 1973,
-    "Export Growth Rate": 1.93,
-    "Import Growth Rate": 1.61,
-  },
-  {
-    year: 1974,
-    "Export Growth Rate": 1.88,
-    "Import Growth Rate": 1.67,
-  },
-  //...
-];
-
-const dataFormatter = (number: number) => `${number / 1000}k`;
+// const dataFormatter = (number: number) => `${number / 1000}k`;
 
 export function Chart() {
   const [data, setData]: any[] = React.useState<any[]>();
@@ -41,6 +12,8 @@ export function Chart() {
   const [oneYear, setOneYear] = React.useState(true);
   const [halfYear, setHalfYear] = React.useState(false);
   const [lastWeek, setLastWeek] = React.useState(false);
+  const [today, setToday] = React.useState(false);
+  const [month, setMonth] = React.useState(false);
 
   React.useEffect(() => {
     axios
@@ -49,9 +22,6 @@ export function Chart() {
       .then((data) => {
         if (oneYear) {
           for (const el of data) {
-            const d = new Date(el["time"]);
-            const a = new Date();
-            console.log(a > d);
             el["time"] = el["time"].slice(0, 10);
             el["prediction"] = el["price"].replace(el["price"][0], 3);
           }
@@ -78,8 +48,35 @@ export function Chart() {
 
           setData(filter);
         }
+
+        if (today) {
+          const today = new Date();
+          for (const el of data) {
+            el["prediction"] = el["price"].replace(el["price"][0], 3);
+          }
+          const filter = data.filter(
+            (el: any) =>
+              new Date(el["time"]).getFullYear() === today.getFullYear() &&
+              new Date(el["time"]).getMonth() === today.getMonth() &&
+              new Date(el["time"]).getDate() === today.getDate(),
+          );
+
+          setData(filter);
+        }
+
+        if (month) {
+          const month = new Date();
+          for (const el of data) {
+            el["prediction"] = el["price"].replace(el["price"][0], 3);
+          }
+          const filter = data.filter(
+            (el: any) => new Date(el["time"]).getFullYear() === month.getFullYear() && new Date(el["time"]).getMonth() === month.getMonth(),
+          );
+
+          setData(filter);
+        }
       });
-  }, [lastWeek, oneYear, req]);
+  }, [halfYear, lastWeek, oneYear, req, today]);
 
   function handleClick(t: string, r: string) {
     setTitle(t);
@@ -106,6 +103,8 @@ export function Chart() {
             setOneYear(true);
             setHalfYear(false);
             setLastWeek(false);
+            setToday(false);
+            setMonth(false);
           }}>
           1 YEAR
         </Button>
@@ -116,8 +115,22 @@ export function Chart() {
             setHalfYear(true);
             setLastWeek(false);
             setOneYear(false);
+            setToday(false);
+            setMonth(false);
           }}>
           Half Year
+        </Button>
+        <Button
+          size="md"
+          className="mt-10"
+          onClick={() => {
+            setMonth(true);
+            setLastWeek(false);
+            setOneYear(false);
+            setHalfYear(false);
+            setToday(false);
+          }}>
+          This Month
         </Button>
         <Button
           size="md"
@@ -126,8 +139,22 @@ export function Chart() {
             setLastWeek(true);
             setOneYear(false);
             setHalfYear(false);
+            setToday(false);
+            setMonth(false);
           }}>
           Last Week
+        </Button>
+        <Button
+          size="md"
+          className="mt-10"
+          onClick={() => {
+            setLastWeek(false);
+            setOneYear(false);
+            setHalfYear(false);
+            setToday(true);
+            setMonth(false);
+          }}>
+          Today
         </Button>
       </div>
     </>
