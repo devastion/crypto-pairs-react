@@ -76,7 +76,7 @@ export function Chart() {
           setData(filter);
         }
       });
-  }, [halfYear, lastWeek, oneYear, req, today]);
+  }, [halfYear, lastWeek, month, oneYear, req, today]);
 
   function handleClick(t: string, r: string) {
     setTitle(t);
