@@ -34,7 +34,9 @@ export function Chart() {
           }
           sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
           const filter = data.filter((el: any) => new Date(el["time"]) > sixMonthsAgo);
-
+          for (const el of filter) {
+            el["time"] = el["time"].slice(0, 10);
+          }
           setData(filter);
         }
 
@@ -45,7 +47,9 @@ export function Chart() {
           }
           sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
           const filter = data.filter((el: any) => new Date(el["time"]) > sevenDaysAgo);
-
+          for (const el of filter) {
+            el["time"] = el["time"].slice(0, 10);
+          }
           setData(filter);
         }
 
@@ -61,6 +65,10 @@ export function Chart() {
               new Date(el["time"]).getDate() === today.getDate(),
           );
 
+          for (const el of filter) {
+            el["time"] = el["time"].slice(0, 10);
+          }
+
           setData(filter);
         }
 
@@ -73,10 +81,14 @@ export function Chart() {
             (el: any) => new Date(el["time"]).getFullYear() === month.getFullYear() && new Date(el["time"]).getMonth() === month.getMonth(),
           );
 
+          for (const el of filter) {
+            el["time"] = el["time"].slice(0, 10);
+          }
+
           setData(filter);
         }
       });
-  }, [halfYear, lastWeek, month, oneYear, req, today]);
+  }, [halfYear, lastWeek, oneYear, req, today]);
 
   function handleClick(t: string, r: string) {
     setTitle(t);
